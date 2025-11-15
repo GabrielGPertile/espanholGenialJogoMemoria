@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import com.example.espanholgenialjogomemoria.R
 import com.example.espanholgenialjogomemoria.viewholder.ImageViewHolder
 
@@ -14,6 +15,9 @@ class LoadingActivity : AppCompatActivity()
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
+        // Bloqueia modo escuro e força modo claro
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.loading_activity)
 

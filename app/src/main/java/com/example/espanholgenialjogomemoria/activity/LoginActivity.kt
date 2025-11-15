@@ -28,5 +28,46 @@ class LoginActivity: AppCompatActivity()
         FirebaseApp.initializeApp(this)
         auth = FirebaseAuth.getInstance()
 
+        // Configuração dos Botões
+        loginActivityViewHolder.btnLogar.setOnClickListener {
+            showLoginScreen()
+        }
+
+        loginActivityViewHolder.btnCancelarLogin.setOnClickListener {
+            cancelLogin()
+        }
+
+        loginActivityViewHolder.btnCadastrar.setOnClickListener {
+            showRegisterScreen()
+        }
+
+        loginActivityViewHolder.btnCancelarRegistro.setOnClickListener {
+            cancelRegistrer()
+        }
+
+        loginActivityViewHolder.btnEntrar.setOnClickListener {
+            val emailLogin = loginActivityViewHolder.etLoginMail.text.toString()
+            val passwordLogin = loginActivityViewHolder.etLoginPassword.text.toString()
+
+            if(validateLoginInput(emailLogin, passwordLogin))
+            {
+                loginUser(emailLogin, passwordLogin)
+            }
+        }
+
+        loginActivityViewHolder.btnRegistrar.setOnClickListener {
+            val emailRegistrar = loginActivityViewHolder.etRegisterMail.text.toString()
+            val passwordRegistrar = loginActivityViewHolder.etRegisterPassword.text.toString()
+            val passwordConfirmRegistrar = loginActivityViewHolder.etRegisterPasswordConfirm.text.toString()
+
+            if (validateRegisterInput(emailRegistrar, passwordRegistrar, passwordConfirmRegistrar)) {
+                registerUser(emailRegistrar, passwordRegistrar, passwordConfirmRegistrar)
+            }
+        }
+
+        loginActivityViewHolder.btnEsqueceuSenha.setOnClickListener {
+            openForgotPasswordActivity()
+        }
+
     }
 }

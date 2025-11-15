@@ -1,5 +1,6 @@
 package com.example.espanholgenialjogomemoria.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -128,5 +129,29 @@ class LoginActivity: AppCompatActivity()
         loginActivityViewHolder.scrollLoginFields.visibility = View.GONE
         loginActivityViewHolder.scrollRegisterFields.visibility = View.GONE
         loginActivityViewHolder.scrollInitialLayout.visibility = View.VISIBLE
+    }
+
+    /**
+     * Função responsável por redirecionar o usuário para a activity de redefinição de senha.
+     *
+     *  Esta função:
+     *  Esta função inicia a Activity `ForgetPasswordReset`, permitindo
+     *  que o usuário informe seu e-mail para recuperar a senha.
+     *
+     * Objetivo:
+     * Abrir a tela de redefinição de senha para que o usuário
+     * possa informar seu e-mail e recuperar a senha.
+     *
+     * Entradas: Não há parâmetros de entrada.
+     *
+     * Saídas: Não há retorno de valor.
+     *
+     * Caso de uso: Chamado ao clicar no botão "Esqueci minha senha" na tela de login.
+     *
+     */
+    private fun openForgotPasswordActivity()
+    {
+        val intent = Intent(this, ForgetPasswordReset::class.java)
+        startActivity(intent)
     }
 }

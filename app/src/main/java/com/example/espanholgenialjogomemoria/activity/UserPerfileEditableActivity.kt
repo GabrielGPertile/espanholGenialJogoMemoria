@@ -10,6 +10,7 @@ import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.espanholgenialjogomemoria.R
+import com.example.espanholgenialjogomemoria.strategy.FirebaseStorageProfileImageStrategy
 import com.example.espanholgenialjogomemoria.viewholder.UserPerfileEditableViewHolder
 import com.example.espanholgenialstorageandroid.model.UserClass
 import com.google.firebase.FirebaseApp

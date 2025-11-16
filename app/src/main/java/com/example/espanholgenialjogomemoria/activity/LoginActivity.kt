@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import com.example.espanholgenialjogomemoria.R
 import com.example.espanholgenialjogomemoria.viewholder.ImageViewHolder
 import com.example.espanholgenialjogomemoria.viewholder.LoginActivityViewHolder
@@ -23,6 +24,9 @@ class LoginActivity: AppCompatActivity()
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
+        // Bloqueia modo escuro e força modo claro
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_activity)
 

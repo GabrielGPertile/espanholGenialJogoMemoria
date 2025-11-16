@@ -1,6 +1,10 @@
 package com.example.espanholgenialjogomemoria.activity
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
@@ -87,5 +91,74 @@ class UserPerfileEditableActivity : BaseDrawerActivity()
         userPerfileEditableViewHolder.btnCanelar.setOnClickListener {
             cancelEditUser()
         }
+    }
+
+    private fun getCorrectlyOrientedBitmap(uri: Uri): Bitmap?
+    {
+        val inputSteam = contentResolver.openInputStream(uri) ?: return null
+        val bitmap = BitmapFactory.decodeStream(inputSteam)
+        inputSteam.close()
+
+        val exitInputStream = contentResolver.openInputStream(uri)
+        val exif = ExifInterface(exitInputStream!!)
+        val orientation = exif.getAttributeInt(
+            ExifInterface.TAG_ORIENTATION,
+            ExifInterface.ORIENTATION_NORMAL
+        )
+        exitInputStream.close()
+
+        val matrix = Matrix()
+
+        when (orientation)
+        {
+            ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+            ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+            ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+        }
+
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+    }
+
+    // Função para corrigir orientação do Bitmap
+    private fun fixBitmapOrientation(bitmap: Bitmap, bytes: ByteArray): Bitmap
+    {
+        val exif = ExifInterface(bytes.inputStream())
+        val orientation = exif.getAttributeInt(
+            ExifInterface.TAG_ORIENTATION,
+            ExifInterface.ORIENTATION_NORMAL
+        )
+
+        val matrix = Matrix()
+        when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+            ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+            ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+        }
+
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+    }
+
+    // Função para tornar circular (igual antes)
+    private fun getCircularBitmap(bitmap: Bitmap): Bitmap {
+        // Determina o tamanho do quadrado
+        val size = Math.min(bitmap.width, bitmap.height)
+        val x = (bitmap.width - size) / 2
+        val y = (bitmap.height - size) / 2
+
+        // Corta o centro do bitmap
+        val squaredBitmap = Bitmap.createBitmap(bitmap, x, y, size, size)
+        val output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+
+        val canvas = android.graphics.Canvas(output)
+        val paint = android.graphics.Paint()
+        val rect = android.graphics.Rect(0, 0, size, size)
+
+        paint.isAntiAlias = true
+        canvas.drawARGB(0, 0, 0, 0)
+        canvas.drawCircle(size / 2f, size / 2f, size / 2f, paint)
+        paint.xfermode = android.graphics.PorterDuffXfermode(android.graphics.PorterDuff.Mode.SRC_IN)
+        canvas.drawBitmap(squaredBitmap, null, rect, paint)
+
+        return output
     }
 }

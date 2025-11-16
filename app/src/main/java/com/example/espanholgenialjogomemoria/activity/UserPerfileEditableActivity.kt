@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
 import com.example.espanholgenialjogomemoria.R
 import com.example.espanholgenialjogomemoria.strategy.FirebaseStorageProfileImageStrategy
 import com.example.espanholgenialjogomemoria.viewholder.UserPerfileEditableViewHolder
@@ -29,6 +30,9 @@ class UserPerfileEditableActivity : BaseDrawerActivity()
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
+        // Bloqueia modo escuro e força modo claro
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.user_perfile_editable_activity)
 

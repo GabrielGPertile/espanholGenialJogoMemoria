@@ -3,6 +3,7 @@ package com.example.espanholgenialjogomemoria.activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import com.example.espanholgenialjogomemoria.R
 import com.example.espanholgenialjogomemoria.strategy.FirebaseStorageProfileImageStrategy
 import com.example.espanholgenialjogomemoria.viewholder.UserActivityViewHolder
@@ -19,6 +20,9 @@ class UserActivity : BaseDrawerActivity()
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
+        // Bloqueia modo escuro e força modo claro
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.user_perfile_activity)
 

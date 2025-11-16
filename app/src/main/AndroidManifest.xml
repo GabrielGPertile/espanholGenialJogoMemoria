@@ -64,6 +64,17 @@
             </intent-filter>
         </activity>
 
+        <!-- Configuração do UserPerfileEditableActivity -->
+        <activity
+            android:name=".activity.UserPerfileEditableActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:exported="true">
+
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>

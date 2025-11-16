@@ -1,8 +1,11 @@
 package com.example.espanholgenialjogomemoria.activity
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.viewpager2.widget.ViewPager2
 import com.example.espanholgenialjogomemoria.R
+import com.example.espanholgenialjogomemoria.adapter.CarrosselAdapter
+import com.example.espanholgenialjogomemoria.adapter.CarrosselItem
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -37,6 +40,40 @@ class SobreNosActivity: BaseDrawerActivity()
 
         // 🔹 ViewPager do carrossel
         val viewPager = findViewById<ViewPager2>(R.id.viewPagerSobreNos)
+
+        // 🔹 Cria referências para as imagens no Firebase Storage
+        val storageRef = FirebaseStorage.getInstance().reference.child("arquivos/logosSobreNos")
+
+        // 🔹 Arquivos e descrições
+        val imagens: List<Pair<String, String>> = listOf(
+            "logo.jpeg" to "Educação e tecnologia estão cada vez mais interligadas, tornando-se elementos centrais na vida cotidiana. Esse avanço permite que os indivíduos conciliem estudos com suas rotinas, aproveitando horários flexíveis e recursos acessíveis. Nesse contexto, surge o Projeto Español Genial, cujo objetivo é integrar tecnologia e ensino de línguas estrangeiras.",
+            "iconeSocia.jpeg" to "Claudia Maria Ferro Mazzarollo — Bacharel em Turismo, especialista em Gestão de Pessoas e docente em cursos de espanhol e turismo.",
+            "iconeProgramador.jpg" to "Gabriel Gasperin Pertile — Desenvolvedor do app Español Genial e estudante de Análise e Desenvolvimento de Sistemas no IFRS."
+        )
+
+        // 🔹 Lista temporária para os itens
+        val listaCarrossel = mutableListOf<CarrosselItem>()
+
+        // 🔹 Busca as imagens do Firebase Storage
+        imagens.forEach { (nomeArquivo, descricao) ->
+            val imagemRef = storageRef.child(nomeArquivo)
+            imagemRef.downloadUrl
+                .addOnSuccessListener { uri ->
+                    listaCarrossel.add(CarrosselItem(uri.toString(), descricao))
+
+                    // Quando todas forem carregadas, define o adapter
+                    if (listaCarrossel.size == imagens.size) {
+                        viewPager.adapter = CarrosselAdapter(listaCarrossel)
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(
+                        this,
+                        "Erro ao carregar imagem $nomeArquivo: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+        }
 
     }
 }

@@ -70,5 +70,22 @@ class UserPerfileEditableActivity : BaseDrawerActivity()
                 }
             }
         }
+
+        //configuração da edição da imagem
+        userPerfileEditableViewHolder.ivPerfilUsuario.setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK).apply {
+                type = "image/*"
+            }
+
+            pickImageLauncher.launch(intent)
+        }
+
+        userPerfileEditableViewHolder.btnSalvar.setOnClickListener {
+            savedUserData()
+        }
+
+        userPerfileEditableViewHolder.btnCanelar.setOnClickListener {
+            cancelEditUser()
+        }
     }
 }

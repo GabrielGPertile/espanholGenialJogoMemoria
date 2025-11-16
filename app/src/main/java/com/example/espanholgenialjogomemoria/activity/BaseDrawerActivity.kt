@@ -10,7 +10,7 @@ import com.example.espanholgenialjogomemoria.R
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 
-class BaseDrawerActivity : AppCompatActivity()
+abstract class BaseDrawerActivity : AppCompatActivity()
 {
     protected lateinit var drawerLayout: DrawerLayout
     protected lateinit var navView: NavigationView

@@ -86,4 +86,25 @@ class BaseDrawerActivity : AppCompatActivity()
         val intent = Intent(this, SobreNosActivity::class.java)
         startActivity(intent)
     }
+
+    protected fun loadProfilePhotoInDrawer()
+    {
+        val user = FirebaseAuth.getInstance().currentUser ?: return
+        val storageRef = com.google.firebase.storage.FirebaseStorage.getInstance().reference
+        val perfilRef = storageRef.child("arquivos/${user.uid}/perfil/fotodeperfil.jpg")
+
+        // pega o header do NavigationView
+        val headerView = navView.getHeaderView(0)
+        val ivPerfil = headerView.findViewById<android.widget.ImageView>(R.id.ivPerfil)
+
+        perfilRef.downloadUrl.addOnSuccessListener { uri ->
+            com.bumptech.glide.Glide.with(this)
+                .load(uri)
+                .circleCrop() // deixa circular
+                .placeholder(R.drawable.perfil_usuario) // imagem padrão
+                .into(ivPerfil)
+        }.addOnFailureListener {
+            ivPerfil.setImageResource(R.drawable.perfil_usuario)
+        }
+    }
 }

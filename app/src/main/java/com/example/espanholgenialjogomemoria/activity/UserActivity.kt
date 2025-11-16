@@ -1,5 +1,6 @@
 package com.example.espanholgenialjogomemoria.activity
 
+import android.content.Intent
 import android.os.Bundle
 import com.example.espanholgenialjogomemoria.R
 import com.example.espanholgenialjogomemoria.viewholder.UserActivityViewHolder
@@ -39,5 +40,11 @@ class UserActivity : BaseDrawerActivity()
         userActivityViewHolder.btnEditar.setOnClickListener {
             navigateToUserPerfileEditableActivity()
         }
+    }
+
+    private fun navigateToUserPerfileEditableActivity()
+    {
+        val intent = Intent(this, UserPerfileEditableActivity::class.java)
+        startActivity(intent)
     }
 }

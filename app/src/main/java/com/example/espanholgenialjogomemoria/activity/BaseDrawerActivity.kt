@@ -33,4 +33,24 @@ class BaseDrawerActivity : AppCompatActivity()
 
         setupNavigationMenu()
     }
+
+    private fun setupNavigationMenu()
+    {
+        navView.setNavigationItemSelectedListener { item ->
+            when(item.itemId) {
+                R.id.menu_perfil -> {
+                    navigateToUserActivity()
+                }
+                R.id.menu_dashboard_principal -> { navigateToMainDashboard() }
+                R.id.menu_jogo_memoria -> {}
+                R.id.menu_SobreNos -> { navigateToMainAboutUs() }
+                R.id.menu_sair -> {
+                    deslogFirebase()
+                }
+            }
+
+            drawerLayout.closeDrawers()
+            true
+        }
+    }
 }

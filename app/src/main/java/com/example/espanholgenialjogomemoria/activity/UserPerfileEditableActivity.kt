@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import com.example.espanholgenialjogomemoria.R
 import com.example.espanholgenialjogomemoria.viewholder.UserPerfileEditableViewHolder
 import com.example.espanholgenialstorageandroid.model.UserClass
@@ -48,5 +49,26 @@ class UserPerfileEditableActivity : BaseDrawerActivity()
 
         loadProfilePhotoInDrawer()
         loadProfilePhotoWithStrategy()
+
+        pickImageLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if(result.resultCode == RESULT_OK)
+            {
+                val data: Intent? = result.data
+                val uri = data?.data
+
+                if(uri != null)
+                {
+                    selectedImageUri = uri
+
+                    val bitmap = getCorrectlyOrientedBitmap(uri)
+
+                    if (bitmap != null) {
+                        userPerfileEditableViewHolder.ivPerfilUsuario.setImageBitmap(bitmap)
+                    }
+                }
+            }
+        }
     }
 }

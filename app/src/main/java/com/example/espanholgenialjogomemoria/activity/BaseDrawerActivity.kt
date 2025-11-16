@@ -80,4 +80,10 @@ class BaseDrawerActivity : AppCompatActivity()
         val intent = Intent(this, DashboardActivity::class.java)
         startActivity(intent)
     }
+
+    private fun navigateToMainAboutUs()
+    {
+        val intent = Intent(this, SobreNosActivity::class.java)
+        startActivity(intent)
+    }
 }

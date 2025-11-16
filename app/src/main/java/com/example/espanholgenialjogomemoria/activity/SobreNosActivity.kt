@@ -1,6 +1,7 @@
 package com.example.espanholgenialjogomemoria.activity
 
 import android.os.Bundle
+import androidx.viewpager2.widget.ViewPager2
 import com.example.espanholgenialjogomemoria.R
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
@@ -33,5 +34,9 @@ class SobreNosActivity: BaseDrawerActivity()
 
         setupDrawer(drawerLayout, navView, toolbar)
         loadProfilePhotoInDrawer()
+
+        // 🔹 ViewPager do carrossel
+        val viewPager = findViewById<ViewPager2>(R.id.viewPagerSobreNos)
+
     }
 }

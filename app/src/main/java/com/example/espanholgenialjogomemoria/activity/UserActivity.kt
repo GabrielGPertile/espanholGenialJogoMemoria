@@ -2,6 +2,7 @@ package com.example.espanholgenialjogomemoria.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import com.example.espanholgenialjogomemoria.R
 import com.example.espanholgenialjogomemoria.strategy.FirebaseStorageProfileImageStrategy
 import com.example.espanholgenialjogomemoria.viewholder.UserActivityViewHolder
@@ -59,5 +60,32 @@ class UserActivity : BaseDrawerActivity()
             imageView = userActivityViewHolder.ivPerfilUsuario,
             userId = userId
         )
+    }
+
+    private fun loadUserdata()
+    {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val userRef = database.getReference("users").child(userId)
+
+        userRef.get().addOnSuccessListener { snapshot ->
+            if(snapshot.exists())
+            {
+                val data = snapshot.value as? Map<*, *>
+                val nome = data?.get("nomeCompleto") as? String ?: ""
+                val idade = (data?.get("idade") as? Long)?.toInt() ?: 0
+                val email = data?.get("email") as? String ?: ""
+
+                val displayNome = if (nome.isEmpty()) "Não há registro de nome" else nome
+                val displayIdade = if (idade == 0) "Não há registro de idade" else idade.toString()
+                val displayEmail = if (email.isEmpty()) "Não há registro de email" else email
+
+                userActivityViewHolder.tvNomeCompletoDado.text = displayNome
+                userActivityViewHolder.tvIdadeDado.text = displayIdade
+                userActivityViewHolder.tvEmailDado.text = displayEmail
+
+            }
+        }.addOnFailureListener { e ->
+            Toast.makeText(this, "Erro ao carregar dados: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
     }
 }

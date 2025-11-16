@@ -220,4 +220,24 @@ class UserPerfileEditableActivity : BaseDrawerActivity()
             saveUserToDatabase(userId)
         }
     }
+
+    private fun saveUserToDatabase(userId: String)
+    {
+        val database = com.google.firebase.database.FirebaseDatabase.getInstance()
+        val userRef = database.getReference("users").child(userId)
+
+        userRef.setValue(user)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Dados salvos com sucesso!", Toast.LENGTH_SHORT).show()
+
+                // Volta para a tela principal do usuário
+                val intent = Intent(this, UserActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+                finish() // finaliza a Activity atual para não voltar com o botão "voltar"
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Erro ao salvar dados: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
 }

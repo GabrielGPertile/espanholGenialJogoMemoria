@@ -161,4 +161,15 @@ class UserPerfileEditableActivity : BaseDrawerActivity()
 
         return output
     }
+
+    private fun loadProfilePhotoWithStrategy() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val strategy = FirebaseStorageProfileImageStrategy(FirebaseStorage.getInstance())
+
+        strategy.loadProfileImage(
+            context = this,
+            imageView = userPerfileEditableViewHolder.ivPerfilUsuario,
+            userId = userId
+        )
+    }
 }

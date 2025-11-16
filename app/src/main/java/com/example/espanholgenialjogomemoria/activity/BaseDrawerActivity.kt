@@ -74,4 +74,10 @@ class BaseDrawerActivity : AppCompatActivity()
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
     }
+
+    private fun navigateToMainDashboard()
+    {
+        val intent = Intent(this, DashboardActivity::class.java)
+        startActivity(intent)
+    }
 }

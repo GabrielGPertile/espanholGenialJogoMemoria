@@ -240,4 +240,9 @@ class UserPerfileEditableActivity : BaseDrawerActivity()
                 Toast.makeText(this, "Erro ao salvar dados: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
+
+    private fun cancelEditUser()
+    {
+        finish()
+    }
 }

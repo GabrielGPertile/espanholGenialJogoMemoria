@@ -7,6 +7,7 @@ import android.graphics.Matrix
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.espanholgenialjogomemoria.R
@@ -172,5 +173,51 @@ class UserPerfileEditableActivity : BaseDrawerActivity()
             imageView = userPerfileEditableViewHolder.ivPerfilUsuario,
             userId = userId
         )
+    }
+
+    private fun savedUserData() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        val nomeCompleto = userPerfileEditableViewHolder.etNomeCompletoDado.text.toString().trim()
+        val idade = userPerfileEditableViewHolder.etIdadeDado.text.toString().trim().toIntOrNull()
+
+        // Verifica se estão vazios
+        if (nomeCompleto.isEmpty()) {
+            userPerfileEditableViewHolder.etNomeCompletoDado.error = "Nome é obrigatório"
+            userPerfileEditableViewHolder.etNomeCompletoDado.requestFocus()
+            return
+        }
+
+        if (idade == null || idade !in 5..120) {
+            userPerfileEditableViewHolder.etIdadeDado.error = "Informe uma idade válida (5 a 120)"
+            userPerfileEditableViewHolder.etIdadeDado.requestFocus()
+            return
+        }
+
+        // Atualiza os dados no objeto UserClass
+        user.uid = userId
+        user.nomeCompleto = nomeCompleto
+        user.idade = idade
+        user.email = auth.currentUser?.email ?: ""
+
+        // 🔹 Agora o upload da imagem é feito APENAS ao clicar em “Salvar”
+        if (selectedImageUri != null) {
+            val storageRef = storage.reference
+            val perfilRef = storageRef.child("arquivos/$userId/perfil/fotodeperfil.jpg")
+
+            perfilRef.putFile(selectedImageUri!!)
+                .addOnSuccessListener {
+                    perfilRef.downloadUrl.addOnSuccessListener { uri ->
+                        user.fotoPerfil = uri.toString()
+                        saveUserToDatabase(userId)
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(this, "Falha ao enviar foto: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        } else {
+            // Nenhuma nova foto foi selecionada
+            saveUserToDatabase(userId)
+        }
     }
 }

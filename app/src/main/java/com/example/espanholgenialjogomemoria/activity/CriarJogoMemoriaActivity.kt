@@ -52,6 +52,33 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
         spinnerCategoria.adapter = adapterCategoria
         spinnerTipoJogoMemoria.adapter = adapterTipoJogoMemoria
 
+        // Spinner da categoria
+        spinnerCategoria.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                val selectCategory = parent.getItemAtPosition(position).toString()
+                if (selectCategory == "Selecione uma categoria") {
+                    return
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // Nenhuma ação necessária
+            }
+        }
+
+        spinnerTipoJogoMemoria.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                val selectTipoJogoMemoria = parent.getItemAtPosition(position).toString()
+                if (selectTipoJogoMemoria == "Selecione um:") {
+                    return
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // Nenhuma ação necessária
+            }
+        }
+
         //configura o menu lateral
         setupDrawer(
             criarJogoMemoriaViewHolder.drawerLayout,

@@ -149,6 +149,37 @@
                     android:paddingTop="16dp"
                     app:layout_constraintTop_toBottomOf="@id/btnEscolherArquivos" />
 
+                <Button
+                    android:id="@+id/btnCasoDeUso"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Caso de Uso"
+                    app:layout_constraintTop_toBottomOf="@id/btnEscolherArquivos"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="24dp"/>
+
+                <Button
+                    android:id="@+id/btnSalvar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Salvar"
+                    app:layout_constraintTop_toBottomOf="@id/btnCasoDeUso"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintEnd_toStartOf="@id/btnCancelar"
+                    android:layout_marginTop="24dp"/>
+
+                <Button
+                    android:id="@+id/btnCancelar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Cancelar"
+                    app:layout_constraintTop_toBottomOf="@id/btnCasoDeUso"
+                    app:layout_constraintStart_toEndOf="@id/btnSalvar"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="24dp"/>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </ScrollView>

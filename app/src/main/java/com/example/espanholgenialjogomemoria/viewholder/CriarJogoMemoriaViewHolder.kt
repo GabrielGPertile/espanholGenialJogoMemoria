@@ -23,6 +23,9 @@ class CriarJogoMemoriaViewHolder(activity: Activity)
     val tvEscolherArquivos: TextView = activity.findViewById(R.id.tvEscolherArquivos)
     val btnEscolherArquivos: Button = activity.findViewById(R.id.btnEscolherArquivos)
     val layoutArquivosSelecionados: LinearLayout = activity.findViewById(R.id.layoutArquivosSelecionados)
+    val btnCasoDeUso: Button = activity.findViewById(R.id.btnCasoDeUso)
+    val btnSalvar: Button = activity.findViewById(R.id.btnSalvar)
+    val btnCanelar: Button = activity.findViewById(R.id.btnCancelar)
 
     // Elementos do menu lateral
     var toolbar: Toolbar =  activity.findViewById(R.id.toolbar)

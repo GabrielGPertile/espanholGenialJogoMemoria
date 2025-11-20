@@ -1,5 +1,6 @@
 package com.example.espanholgenialjogomemoria.activity
 
+import android.content.Intent
 import android.os.Bundle
 import com.example.espanholgenialjogomemoria.R
 import com.example.espanholgenialjogomemoria.viewholder.DashboardActivityViewHolder
@@ -28,5 +29,11 @@ class DashboardActivity: BaseDrawerActivity()
         dashboardActivityViewHolder.btnCriarJogoMemoria.setOnClickListener {
             navigateToCreateGame()
         }
+    }
+
+    private fun navigateToCreateGame()
+    {
+        val intent = Intent(this, CriarJogoMemoriaActivity::class.java)
+        startActivity(intent)
     }
 }

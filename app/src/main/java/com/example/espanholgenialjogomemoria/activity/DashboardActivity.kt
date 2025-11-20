@@ -23,5 +23,10 @@ class DashboardActivity: BaseDrawerActivity()
 
         setupDrawer(drawerLayout, navView, toolbar)
         loadProfilePhotoInDrawer()
+
+        //configuração do botão
+        dashboardActivityViewHolder.btnCriarJogoMemoria.setOnClickListener {
+            navigateToCreateGame()
+        }
     }
 }

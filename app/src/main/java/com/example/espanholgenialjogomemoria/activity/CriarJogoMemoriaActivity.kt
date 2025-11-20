@@ -87,5 +87,22 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
         )
 
         loadProfilePhotoInDrawer()
+
+        //configuração dos botões
+        criarJogoMemoriaViewHolder.btnEscolherArquivos.setOnClickListener {
+
+        }
+
+        criarJogoMemoriaViewHolder.btnSalvar.setOnClickListener {
+
+        }
+
+        criarJogoMemoriaViewHolder.btnCanelar.setOnClickListener {
+
+        }
+
+        criarJogoMemoriaViewHolder.btnCasoDeUso.setOnClickListener {
+
+        }
     }
 }

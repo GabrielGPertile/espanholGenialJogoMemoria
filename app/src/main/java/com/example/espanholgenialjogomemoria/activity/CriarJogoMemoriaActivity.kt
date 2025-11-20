@@ -1,6 +1,10 @@
 package com.example.espanholgenialjogomemoria.activity
 
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import com.example.espanholgenialjogomemoria.R
 import com.example.espanholgenialjogomemoria.model.JogoMemoria
 import com.example.espanholgenialjogomemoria.strategy.Categoria
@@ -25,11 +29,28 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
         setContentView(R.layout.criar_jogo_memoria)
 
         criarJogoMemoriaViewHolder = CriarJogoMemoriaViewHolder(this)
+        categoria = Categoria()
+        tipoJogoMemoria = TipoJogoMemoria()
 
         //Inicializa o Auth do Firebase
         FirebaseApp.initializeApp(this)
         auth = FirebaseAuth.getInstance()
         storage = FirebaseStorage.getInstance()
+
+        //obtem a lista de dados
+        val categoriaList = categoria.addCategoria()
+        val tipoJogoMemoriaList = tipoJogoMemoria.addTipoJogoMemoria()
+
+        //Referencia o spinner do layout
+        val spinnerCategoria: Spinner = criarJogoMemoriaViewHolder.spinnerCategoriaOpcoes
+        val spinnerTipoJogoMemoria: Spinner = criarJogoMemoriaViewHolder.spinnerJogoMemoriaOpcoes
+
+        //Cria um adapter com os dados das listas
+        val adapterCategoria = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, categoriaList)
+        val adapterTipoJogoMemoria = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, tipoJogoMemoriaList)
+
+        spinnerCategoria.adapter = adapterCategoria
+        spinnerTipoJogoMemoria.adapter = adapterTipoJogoMemoria
 
         //configura o menu lateral
         setupDrawer(

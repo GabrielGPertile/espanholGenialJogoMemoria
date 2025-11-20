@@ -98,11 +98,16 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
         }
 
         criarJogoMemoriaViewHolder.btnCanelar.setOnClickListener {
-
+            cancelCreateGame()
         }
 
         criarJogoMemoriaViewHolder.btnCasoDeUso.setOnClickListener {
 
         }
+    }
+
+    private fun cancelCreateGame()
+    {
+        finish()
     }
 }

@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.espanholgenialjogomemoria.R
 import com.example.espanholgenialjogomemoria.dialog.EscolherArquivosDialog
@@ -29,6 +30,9 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
     private lateinit var jogoMemoria: JogoMemoria
     private lateinit var categoria: Categoria
     private lateinit var tipoJogoMemoria: TipoJogoMemoria
+    private var selectTipoJogoMemoria: String? = null
+    private var selectCategoria: String? = null
+    private var imagensSelecionadas: List<Imagem> = emptyList()
     private lateinit var criarJogoMemoriaViewHolder: CriarJogoMemoriaViewHolder
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -63,28 +67,19 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
         // Spinner da categoria
         spinnerCategoria.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                val selectCategory = parent.getItemAtPosition(position).toString()
-                if (selectCategory == "Selecione uma categoria") {
-                    return
-                }
+                selectCategoria = parent.getItemAtPosition(position).toString()
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                // Nenhuma ação necessária
-            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
         }
 
+        //spiner do tipo de jogo da memória
         spinnerTipoJogoMemoria.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                val selectTipoJogoMemoria = parent.getItemAtPosition(position).toString()
-                if (selectTipoJogoMemoria == "Selecione um:") {
-                    return
-                }
+                selectTipoJogoMemoria = parent.getItemAtPosition(position).toString()
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                // Nenhuma ação necessária
-            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
         }
 
         //configura o menu lateral
@@ -103,7 +98,7 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
 
 
         criarJogoMemoriaViewHolder.btnSalvar.setOnClickListener {
-
+           saveCreatedGame(selectTipoJogoMemoria, selectCategoria)
         }
 
         criarJogoMemoriaViewHolder.btnCanelar.setOnClickListener {
@@ -148,6 +143,8 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
     }
 
     private fun mostrarArquivosSelecionados(lista: List<Imagem>) {
+        imagensSelecionadas = lista  // <-- salva para uso posterior
+
         val layout = findViewById<LinearLayout>(R.id.layoutArquivosSelecionados)
         layout.removeAllViews()
 
@@ -166,6 +163,21 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
                 .into(img)
 
             layout.addView(view)
+        }
+    }
+
+    private fun saveCreatedGame(selectTipoJogoMemoria: String?, selectCategoria: String?)
+    {
+        if(selectTipoJogoMemoria == "Selecione um:")
+        {
+            Toast.makeText(this, "Selecione uma tipo de jogo válido", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        if(selectCategoria == "Selecione uma categoria")
+        {
+            Toast.makeText(this, "Selecione uma categoria válida", Toast.LENGTH_LONG).show()
+            return
         }
     }
 

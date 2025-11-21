@@ -12,5 +12,5 @@ data class JogoMemoria(
 data class ItemJogoMemoria(
     val imagemURL: String = "",   // sempre existe
     val pt: String? = null,    // só quando o tipo exigir
-    val en: String? = null     // só quando o tipo exigir
+    val es: String? = null     // só quando o tipo exigir
 )

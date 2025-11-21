@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.example.espanholgenialjogomemoria.R
 import com.example.espanholgenialjogomemoria.dialog.EscolherArquivosDialog
 import com.example.espanholgenialjogomemoria.model.Imagem
+import com.example.espanholgenialjogomemoria.model.ItemJogoMemoria
 import com.example.espanholgenialjogomemoria.model.JogoMemoria
 import com.example.espanholgenialjogomemoria.model.SanitizeNameStrategy
 import com.example.espanholgenialjogomemoria.strategy.Categoria
@@ -229,19 +230,14 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
             nomesSelecionados.forEach { nome ->
                 val partes = nome.split("_")
 
-                if(partes.size >= 2)
-                {
-                    val segundoNome = partes[1]
-                    Log.d("SEGUNDO", "Peguei: $segundoNome")
-                }
+                val nomeES = if(partes.size >= 2) partes[1] else null
+
+                ItemJogoMemoria(
+                    imagemURL = imagem.url,
+                    pt = null,
+
+                )
             }
-
-            Log.d("Variavel", "O que veio: $selectTipoJogoMemoria")
-            Log.d("JOGO", "Nomes das imagens: $nomesSelecionados")
-            Log.d("DEBUG_LISTA", "O layout tem $quantidade itens")
-
-            Toast.makeText(this, nomesSelecionados.joinToString(), Toast.LENGTH_LONG).show()
-            Toast.makeText(this, "O nome do jogo: $sanitizedName", Toast.LENGTH_SHORT).show()
         }
     }
 

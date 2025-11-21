@@ -24,12 +24,14 @@ import com.example.espanholgenialjogomemoria.strategy.TipoJogoMemoria
 import com.example.espanholgenialjogomemoria.viewholder.CriarJogoMemoriaViewHolder
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 
 class CriarJogoMemoriaActivity: BaseDrawerActivity()
 {
     private lateinit var auth: FirebaseAuth
     private lateinit var storage: FirebaseStorage
+    private lateinit var firestore: FirebaseFirestore
     private lateinit var jogoMemoria: JogoMemoria
     private lateinit var categoria: Categoria
     private lateinit var tipoJogoMemoria: TipoJogoMemoria
@@ -51,6 +53,7 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
         FirebaseApp.initializeApp(this)
         auth = FirebaseAuth.getInstance()
         storage = FirebaseStorage.getInstance()
+        firestore = FirebaseFirestore.getInstance()
 
         //obtem a lista de dados
         val categoriaList = categoria.addCategoria()
@@ -223,21 +226,85 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
             }
         }
 
-        if(selectTipoJogoMemoria == "Par_EN")
+        if(selectTipoJogoMemoria == "Par_ES")
         {
-            val nomesSelecionados = imagensSelecionadas.map { it.nome }
-
-            nomesSelecionados.forEach { nome ->
-                val partes = nome.split("_")
-
-                val nomeES = if(partes.size >= 2) partes[1] else null
+            val itens = imagensSelecionadas.map { imagem ->
+                val partes = imagem.nome.split("_")
+                val nomeES = if (partes.size >= 2) partes[1] else null
 
                 ItemJogoMemoria(
-                    imagemURL = imagem.url,
+                    imagemURL = imagem.url ?: "",
                     pt = null,
-
+                    es = nomeES
                 )
             }
+
+            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+            firestore.collection("users")
+                .document(userId)
+                .collection("jogoMemoria")
+                .document(sanitizedName)
+                .set(
+                    JogoMemoria(
+                        nome = sanitizedName,
+                        tipoJogoMemoria = selectTipoJogoMemoria ?: "",
+                        categoria = selectCategoria ?: "",
+                        itens = itens,
+                        criadoPor = userId
+                    )
+                )
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Jogo salvo com sucesso!", Toast.LENGTH_LONG).show()
+                    criarJogoMemoriaViewHolder.etNomeJogoMemoria.text.clear()
+                    criarJogoMemoriaViewHolder.spinnerCategoriaOpcoes.setSelection(0)
+                    criarJogoMemoriaViewHolder.spinnerJogoMemoriaOpcoes.setSelection(0)
+                    criarJogoMemoriaViewHolder.layoutArquivosSelecionados.removeAllViews()
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(this, "Erro ao salvar: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+        }
+
+        if(selectTipoJogoMemoria == "Triplo")
+        {
+            val itens = imagensSelecionadas.map { imagem ->
+                val partes = imagem.nome.split("_")
+                val nomePT = if (partes.size >= 2) partes[0] else null
+                val nomeES = if (partes.size >= 2) partes[1] else null
+
+                ItemJogoMemoria(
+                    imagemURL = imagem.url ?: "",
+                    pt = nomePT,
+                    es = nomeES
+                )
+            }
+
+            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+            firestore.collection("users")
+                .document(userId)
+                .collection("jogoMemoria")
+                .document(sanitizedName)
+                .set(
+                    JogoMemoria(
+                        nome = sanitizedName,
+                        tipoJogoMemoria = selectTipoJogoMemoria ?: "",
+                        categoria = selectCategoria ?: "",
+                        itens = itens,
+                        criadoPor = userId
+                    )
+                )
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Jogo salvo com sucesso!", Toast.LENGTH_LONG).show()
+                    criarJogoMemoriaViewHolder.etNomeJogoMemoria.text.clear()
+                    criarJogoMemoriaViewHolder.spinnerCategoriaOpcoes.setSelection(0)
+                    criarJogoMemoriaViewHolder.spinnerJogoMemoriaOpcoes.setSelection(0)
+                    criarJogoMemoriaViewHolder.layoutArquivosSelecionados.removeAllViews()
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(this, "Erro ao salvar: ${e.message}", Toast.LENGTH_LONG).show()
+                }
         }
     }
 

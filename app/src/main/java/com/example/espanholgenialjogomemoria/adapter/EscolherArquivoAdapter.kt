@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.espanholgenialjogomemoria.R
 import com.example.espanholgenialjogomemoria.model.Imagem
@@ -30,33 +29,9 @@ class EscolherArquivoAdapter(
         holder.checkBox.setOnCheckedChangeListener(null)
         holder.checkBox.isChecked = selecionados.contains(imagem)
 
-        holder.checkBox.setOnCheckedChangeListener { button, isChecked ->
-
-            if (isChecked) {
-                // --- LIMITE MÁXIMO ---
-                if (selecionados.size >= 7) {
-                    button.isChecked = false
-                    Toast.makeText(
-                        holder.itemView.context,
-                        "Máximo de 7 itens!", Toast.LENGTH_SHORT
-                    ).show()
-                    return@setOnCheckedChangeListener
-                }
-
-                selecionados.add(imagem)
-            } else {
-                // --- LIMITE MÍNIMO ---
-                if (selecionados.size <= 5) {
-                    button.isChecked = true
-                    Toast.makeText(
-                        holder.itemView.context,
-                        "Selecione pelo menos 5 itens!", Toast.LENGTH_SHORT
-                    ).show()
-                    return@setOnCheckedChangeListener
-                }
-
-                selecionados.remove(imagem)
-            }
+        holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) selecionados.add(imagem)
+            else selecionados.remove(imagem)
         }
     }
 

@@ -6,7 +6,7 @@ class TipoJogoMemoria
     {
         return listOf(
             "Selecione um:",
-            "Par_EN",
+            "Par_ES",
             "Triplo"
         )
     }

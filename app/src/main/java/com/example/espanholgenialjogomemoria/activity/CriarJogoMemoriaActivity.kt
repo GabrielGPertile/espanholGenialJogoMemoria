@@ -179,6 +179,26 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
             Toast.makeText(this, "Selecione uma categoria válida", Toast.LENGTH_LONG).show()
             return
         }
+
+        if(selectTipoJogoMemoria == "Par_EN")
+        {
+            val nomesSelecionados = imagensSelecionadas.map { it.nome }
+
+            nomesSelecionados.forEach { nome ->
+                val partes = nome.split("_")
+
+                if(partes.size >= 2)
+                {
+                    val segundoNome = partes[1]
+                    Log.d("SEGUNDO", "Peguei: $segundoNome")
+                }
+            }
+
+            Log.d("Variavel", "O que veio: $selectTipoJogoMemoria")
+            Log.d("JOGO", "Nomes das imagens: $nomesSelecionados")
+
+            Toast.makeText(this, nomesSelecionados.joinToString(), Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun cancelCreateGame()

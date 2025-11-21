@@ -168,6 +168,12 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
 
     private fun saveCreatedGame(selectTipoJogoMemoria: String?, selectCategoria: String?)
     {
+        if(criarJogoMemoriaViewHolder.etNomeJogoMemoria.text.isEmpty())
+        {
+            Toast.makeText(this, "O nome do jogo não pode estar vazio!", Toast.LENGTH_LONG).show()
+            return
+        }
+
         if(selectTipoJogoMemoria == "Selecione um:")
         {
             Toast.makeText(this, "Selecione uma tipo de jogo válido", Toast.LENGTH_LONG).show()

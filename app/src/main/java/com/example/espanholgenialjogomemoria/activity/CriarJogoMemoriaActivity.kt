@@ -16,7 +16,9 @@ import com.example.espanholgenialjogomemoria.R
 import com.example.espanholgenialjogomemoria.dialog.EscolherArquivosDialog
 import com.example.espanholgenialjogomemoria.model.Imagem
 import com.example.espanholgenialjogomemoria.model.JogoMemoria
+import com.example.espanholgenialjogomemoria.model.SanitizeNameStrategy
 import com.example.espanholgenialjogomemoria.strategy.Categoria
+import com.example.espanholgenialjogomemoria.strategy.SanitizeNameInterface
 import com.example.espanholgenialjogomemoria.strategy.TipoJogoMemoria
 import com.example.espanholgenialjogomemoria.viewholder.CriarJogoMemoriaViewHolder
 import com.google.firebase.FirebaseApp
@@ -174,6 +176,19 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
             return
         }
 
+        val nomeRaw = criarJogoMemoriaViewHolder.etNomeJogoMemoria.text.toString()
+
+        val sanitizer: SanitizeNameInterface = SanitizeNameStrategy()
+
+        val sanitizedName = try {
+            val sanitized = sanitizer.sanitizeFileName(nomeRaw)
+
+            sanitized?.lowercase() ?: return
+        } catch (e: IllegalArgumentException) {
+            Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
+            return
+        }
+
         if(selectTipoJogoMemoria == "Selecione um:")
         {
             Toast.makeText(this, "Selecione uma tipo de jogo válido", Toast.LENGTH_LONG).show()
@@ -204,6 +219,7 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
             Log.d("JOGO", "Nomes das imagens: $nomesSelecionados")
 
             Toast.makeText(this, nomesSelecionados.joinToString(), Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "O nome do jogo: $sanitizedName", Toast.LENGTH_SHORT).show()
         }
     }
 

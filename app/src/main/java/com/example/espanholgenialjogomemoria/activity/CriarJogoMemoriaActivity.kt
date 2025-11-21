@@ -166,6 +166,11 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
 
             layout.addView(view)
         }
+
+        // 🔥 Aqui pega quantos itens foram adicionados
+        val quantidade = layout.childCount
+
+        Log.d("DEBUG_LISTA", "O layout tem $quantidade itens")
     }
 
     private fun saveCreatedGame(selectTipoJogoMemoria: String?, selectCategoria: String?)
@@ -177,6 +182,7 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
         }
 
         val nomeRaw = criarJogoMemoriaViewHolder.etNomeJogoMemoria.text.toString()
+        val quantidade = criarJogoMemoriaViewHolder.layoutArquivosSelecionados.childCount
 
         val sanitizer: SanitizeNameInterface = SanitizeNameStrategy()
 
@@ -201,6 +207,21 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
             return
         }
 
+        if(quantidade < 5 || quantidade > 7)
+        {
+            when {
+                quantidade < 5 ->
+                    Toast.makeText(this, "Selecione pelo menos 5 itens!", Toast.LENGTH_LONG).show()
+
+                quantidade > 7 ->
+                    Toast.makeText(this, "O máximo permitido é 7 itens!", Toast.LENGTH_LONG).show()
+
+                else -> {
+                    // Pode continuar
+                }
+            }
+        }
+
         if(selectTipoJogoMemoria == "Par_EN")
         {
             val nomesSelecionados = imagensSelecionadas.map { it.nome }
@@ -217,6 +238,7 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
 
             Log.d("Variavel", "O que veio: $selectTipoJogoMemoria")
             Log.d("JOGO", "Nomes das imagens: $nomesSelecionados")
+            Log.d("DEBUG_LISTA", "O layout tem $quantidade itens")
 
             Toast.makeText(this, nomesSelecionados.joinToString(), Toast.LENGTH_LONG).show()
             Toast.makeText(this, "O nome do jogo: $sanitizedName", Toast.LENGTH_SHORT).show()

@@ -112,7 +112,7 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
         }
 
         criarJogoMemoriaViewHolder.btnCasoDeUso.setOnClickListener {
-
+            explicacoes()
         }
     }
 
@@ -306,6 +306,31 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
                     Toast.makeText(this, "Erro ao salvar: ${e.message}", Toast.LENGTH_LONG).show()
                 }
         }
+    }
+
+    private fun explicacoes() {
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+        builder.setTitle("Caso de Uso - Criar Jogo de Memória")
+        builder.setMessage(
+            "📌 Para criar um jogo de memória com imagens, primeiro você precisa garantir que elas estejam públicas.\n\n" +
+                    "📝 As imagens devem estar no seu armazenamento do EspanholGenialAndroidStorage.\n\n" +
+                    "⚠️ Somente imagens públicas poderão ser exibidas no seletor e adicionadas ao jogo.\n\n" +
+                    "💡 Como tornar suas imagens públicas:\n" +
+                    "1️⃣ Entre no menu lateral do EspanholGenialAndroidStorage.\n" +
+                    "2️⃣ Clique em 'Imagens Privadas'.\n" +
+                    "3️⃣ Clique no ícone de compartilhar para torná-la pública.\n\n" +
+                    "🎮 Depois de tornar públicas, no app clique em 'Escolher Arquivos' para selecionar as imagens.\n" +
+                    "🔹 Dica: Selecione entre 5 e 7 imagens para que o jogo funcione corretamente.\n\n" +
+                    "🕹️ Escolha o tipo de jogo de memória:\n" +
+                    "   • **Par_ES**: cada carta tem um par em espanhol. O jogador deve combinar a imagem com a palavra correspondente em espanhol.\n" +
+                    "   • **Triplo**: cada carta tem três elementos (por exemplo, português, espanhol e a imagem). O jogador deve encontrar a combinação correta entre os três.\n\n" +
+                    "📂 Escolha uma categoria para o jogo. Se a categoria correspondente não estiver disponível, utilize a categoria **'Conteúdo Extra'**.\n\n" +
+                    "✏️ Dê um nome ao jogo e clique em 'Salvar'. O jogo será armazenado no seu perfil e poderá ser jogado posteriormente."
+        )
+        builder.setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
     }
 
     private fun cancelCreateGame()

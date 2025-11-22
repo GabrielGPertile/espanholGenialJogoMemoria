@@ -2,8 +2,10 @@ package com.example.espanholgenialjogomemoria.dialog
 
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -11,6 +13,8 @@ import android.widget.Spinner
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.example.espanholgenialjogomemoria.R
+import com.example.espanholgenialjogomemoria.strategy.Categoria
+import com.example.espanholgenialjogomemoria.strategy.TipoJogoMemoria
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -81,16 +85,16 @@ class EditMemoryGameDialog : DialogFragment() {
                 if (!doc.exists()) return@addOnSuccessListener
 
                 val nome = doc.getString("nome") ?: ""
-                val tipo = doc.getString("tipo") ?: ""
+                val tipo = doc.getString("tipoJogoMemoria") ?: ""
                 val categoria = doc.getString("categoria") ?: ""
                 val arquivos = doc.get("arquivos") as? List<String> ?: emptyList()
 
                 etNome.setText(nome)
 
-                selecionarItemSpinner(spinnerTipo, tipo)
-                selecionarItemSpinner(spinnerCategoria, categoria)
+                preencherSpinnerTipo(tipo)
+                preencherSpinnerCategoria(categoria)
 
-                mostrarArquivosSelecionados(arquivos)
+                //mostrarArquivosSelecionados(arquivos)
             }
     }
 
@@ -113,6 +117,42 @@ class EditMemoryGameDialog : DialogFragment() {
             tv.textSize = 16f
             tv.setPadding(8, 8, 8, 8)
             layoutArquivos.addView(tv)
+        }
+    }
+
+    private fun preencherSpinnerTipo(tipoSelecionado: String) {
+
+        val lista = TipoJogoMemoria().addTipoJogoMemoria()
+
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, lista)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        spinnerTipo.adapter = adapter
+
+        // só seleciona se tiver vindo do Firestore
+        if (tipoSelecionado != null) {
+            spinnerTipo.post {
+                val pos = lista.indexOf(tipoSelecionado)
+                if (pos >= 0) spinnerTipo.setSelection(pos)
+            }
+        }
+    }
+
+    private fun preencherSpinnerCategoria(categoriaSelecionada: String)
+    {
+        val lista = Categoria().addCategoria()
+
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, lista)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        spinnerCategoria.adapter = adapter
+
+        // só seleciona se tiver vindo do Firestore
+        if (categoriaSelecionada != null) {
+            spinnerCategoria.post {
+                val pos = lista.indexOf(categoriaSelecionada)
+                if (pos >= 0) spinnerCategoria.setSelection(pos)
+            }
         }
     }
 }

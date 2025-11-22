@@ -95,6 +95,17 @@
             </intent-filter>
         </activity>
 
+        <!-- Configuração do ListarMyMemoryGameActivity -->
+        <activity
+            android:name=".activity.ListarMyMemoryGameActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:exported="true">
+
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>

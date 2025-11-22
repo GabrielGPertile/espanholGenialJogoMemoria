@@ -83,7 +83,7 @@ abstract class BaseDrawerActivity : AppCompatActivity()
 
     private fun navigateToMainMyMemoryGame()
     {
-        val intent = Intent(this, MyMemoryGameActivity::class.java)
+        val intent = Intent(this, ListarMyMemoryGameActivity::class.java)
         startActivity(intent)
     }
 

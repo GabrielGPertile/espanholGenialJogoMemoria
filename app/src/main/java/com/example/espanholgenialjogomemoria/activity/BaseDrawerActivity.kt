@@ -45,7 +45,7 @@ abstract class BaseDrawerActivity : AppCompatActivity()
                     navigateToUserActivity()
                 }
                 R.id.menu_dashboard_principal -> { navigateToMainDashboard() }
-                R.id.menu_jogo_memoria -> {}
+                R.id.menu_jogo_memoria -> { navigateToMainMyMemoryGame() }
                 R.id.menu_SobreNos -> { navigateToMainAboutUs() }
                 R.id.menu_sair -> {
                     deslogFirebase()
@@ -78,6 +78,12 @@ abstract class BaseDrawerActivity : AppCompatActivity()
     private fun navigateToMainDashboard()
     {
         val intent = Intent(this, DashboardActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun navigateToMainMyMemoryGame()
+    {
+        val intent = Intent(this, MyMemoryGameActivity::class.java)
         startActivity(intent)
     }
 

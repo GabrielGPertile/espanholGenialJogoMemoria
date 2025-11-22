@@ -52,10 +52,30 @@ class ListarMyMemoryGameActivity : BaseDrawerActivity()
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = ListarJogoMemoriaAdapter(
             listaJogoMemoria,
-            onJogar = { nome -> jogarJogoMemoria(nome) },
-            onEditar = { nome -> editarJogoMemoria(nome) },
-            onExcluir = { nome -> excluirJogoMemoria(nome) }
+            onJogar = { /*nome -> jogarJogoMemoria(nome)*/ },
+            onEditar = { /*nome -> editarJogoMemoria(nome)*/ },
+            onExcluir = { /*nome -> excluirJogoMemoria(nome)*/ }
         )
         recyclerView.adapter = adapter
+
+        carregarNomesVideos()
+    }
+
+    private fun carregarNomesVideos()
+    {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val firestoreRef = firestore.collection("users").document(userId).collection("jogoMemoria")
+
+        firestoreRef.get()
+            .addOnSuccessListener { result ->
+                listaJogoMemoria.clear()
+                for (document in result) {
+                    listaJogoMemoria.add(document.id)
+                }
+                adapter.notifyDataSetChanged()
+            }
+            .addOnFailureListener { e ->
+                e.printStackTrace()
+            }
     }
 }

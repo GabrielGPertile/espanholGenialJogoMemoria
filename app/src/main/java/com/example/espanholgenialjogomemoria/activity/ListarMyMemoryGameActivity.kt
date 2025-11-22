@@ -1,6 +1,7 @@
 package com.example.espanholgenialjogomemoria.activity
 
 import android.os.Bundle
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.espanholgenialjogomemoria.R
 import com.example.espanholgenialjogomemoria.adapter.ListarJogoMemoriaAdapter
@@ -46,5 +47,15 @@ class ListarMyMemoryGameActivity : BaseDrawerActivity()
         )
 
         loadProfilePhotoInDrawer()
+
+        recyclerView = findViewById(R.id.recyclerViewJogoMemoria)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        adapter = ListarJogoMemoriaAdapter(
+            listaJogoMemoria,
+            onJogar = { nome -> jogarJogoMemoria(nome) },
+            onEditar = { nome -> editarJogoMemoria(nome) },
+            onExcluir = { nome -> excluirJogoMemoria(nome) }
+        )
+        recyclerView.adapter = adapter
     }
 }

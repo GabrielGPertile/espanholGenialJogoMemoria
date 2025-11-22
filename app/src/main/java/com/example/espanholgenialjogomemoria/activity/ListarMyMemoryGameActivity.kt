@@ -1,6 +1,8 @@
 package com.example.espanholgenialjogomemoria.activity
 
 import android.os.Bundle
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.espanholgenialjogomemoria.R
@@ -54,7 +56,7 @@ class ListarMyMemoryGameActivity : BaseDrawerActivity()
             listaJogoMemoria,
             onJogar = { /*nome -> jogarJogoMemoria(nome)*/ },
             onEditar = { /*nome -> editarJogoMemoria(nome)*/ },
-            onExcluir = { /*nome -> excluirJogoMemoria(nome)*/ }
+            onExcluir = { nome -> excluirJogoMemoria(nome) }
         )
         recyclerView.adapter = adapter
 
@@ -77,5 +79,47 @@ class ListarMyMemoryGameActivity : BaseDrawerActivity()
             .addOnFailureListener { e ->
                 e.printStackTrace()
             }
+    }
+
+    private fun excluirJogoMemoria(nome: String)
+    {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Excluir vídeo")
+        builder.setMessage("Tem certeza que deseja excluir o joga da memória,  \"$nome\" permanentemente?")
+
+        builder.setPositiveButton("Sim") { dialog, _ ->
+            dialog.dismiss()
+
+            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@setPositiveButton
+            val firestoreRef = firestore.collection("users").document(userId).collection("jogoMemoria").document(nome)
+
+
+            firestoreRef.delete()
+                .addOnSuccessListener {
+
+                    // Remove da lista local
+                    listaJogoMemoria.remove(nome)
+                    adapter.notifyDataSetChanged()
+
+                    Toast.makeText(
+                        this,
+                        "Jogo \"$nome\" excluído com sucesso!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(
+                        this,
+                        "Erro ao excluir o jogo. Tente novamente.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+        }
+
+        builder.setNegativeButton("Cancelar") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        builder.show()
     }
 }

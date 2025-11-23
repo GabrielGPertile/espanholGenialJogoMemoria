@@ -22,7 +22,7 @@ import com.example.espanholgenialjogomemoria.R
 import com.example.espanholgenialjogomemoria.model.Imagem
 import com.example.espanholgenialjogomemoria.model.ItemJogoMemoria
 import com.example.espanholgenialjogomemoria.model.JogoMemoria
-import com.example.espanholgenialjogomemoria.model.SanitizeNameStrategy
+import com.example.espanholgenialjogomemoria.strategy.SanitizeNameStrategy
 import com.example.espanholgenialjogomemoria.strategy.Categoria
 import com.example.espanholgenialjogomemoria.strategy.SanitizeNameInterface
 import com.example.espanholgenialjogomemoria.strategy.TipoJogoMemoria

@@ -1,11 +1,9 @@
-package com.example.espanholgenialjogomemoria.model
-
-import com.example.espanholgenialjogomemoria.strategy.SanitizeNameInterface
+package com.example.espanholgenialjogomemoria.strategy
 
 class SanitizeNameStrategy : SanitizeNameInterface
 {
     override fun sanitizeFileName(input: String): String? {
-        val regex = Regex("[#\\[\\]*?\"<>|%\\\\{}^~:/ ]")
+        val regex = Regex("[#\\[\\]*?\"<>|%\\\\{}^~:/ .]")
 
         if(regex.containsMatchIn(input))
         {

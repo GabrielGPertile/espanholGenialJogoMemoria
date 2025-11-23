@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.espanholgenialjogomemoria.R
 import com.example.espanholgenialjogomemoria.adapter.ListarJogoMemoriaAdapter
+import com.example.espanholgenialjogomemoria.dialog.EditMemoryGameDialog
 import com.example.espanholgenialjogomemoria.model.SanitizeNameStrategy
 import com.example.espanholgenialjogomemoria.strategy.SanitizeNameInterface
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -55,7 +56,7 @@ class ListarMyMemoryGameActivity : BaseDrawerActivity()
         adapter = ListarJogoMemoriaAdapter(
             listaJogoMemoria,
             onJogar = { /*nome -> jogarJogoMemoria(nome)*/ },
-            onEditar = { /*nome -> editarJogoMemoria(nome)*/ },
+            onEditar = { nome -> editarJogoMemoria(nome) },
             onExcluir = { nome -> excluirJogoMemoria(nome) }
         )
         recyclerView.adapter = adapter
@@ -79,6 +80,17 @@ class ListarMyMemoryGameActivity : BaseDrawerActivity()
             .addOnFailureListener { e ->
                 e.printStackTrace()
             }
+    }
+
+    private fun editarJogoMemoria(nome: String)
+    {
+        val dialog = EditMemoryGameDialog()
+
+        val bundle = Bundle()
+        bundle.putString("nomeJogo", nome)
+        dialog.arguments = bundle
+
+        dialog.show(supportFragmentManager, "dialogEditar")
     }
 
     private fun excluirJogoMemoria(nome: String)

@@ -225,11 +225,9 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
 
                 quantidade > 7 ->
                     Toast.makeText(this, "O máximo permitido é 7 itens!", Toast.LENGTH_LONG).show()
-
-                else -> {
-                    // Pode continuar
-                }
             }
+
+            return
         }
 
         if(selectTipoJogoMemoria == "Par_ES")

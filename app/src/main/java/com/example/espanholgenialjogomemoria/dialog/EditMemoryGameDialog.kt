@@ -21,17 +21,23 @@ import com.example.espanholgenialjogomemoria.R
 import com.example.espanholgenialjogomemoria.model.Imagem
 import com.example.espanholgenialjogomemoria.strategy.Categoria
 import com.example.espanholgenialjogomemoria.strategy.TipoJogoMemoria
+import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 
 class EditMemoryGameDialog : DialogFragment() {
 
+    private lateinit var auth: FirebaseAuth
+    private lateinit var storage: FirebaseStorage
+    private lateinit var firestore: FirebaseFirestore
     private var imagensSelecionadas: List<Imagem> = emptyList()
     private lateinit var nomeJogo: String
     private lateinit var etNome: EditText
     private lateinit var spinnerTipo: Spinner
     private lateinit var spinnerCategoria: Spinner
     private lateinit var layoutArquivos: LinearLayout
+    private lateinit var btnEscolherArquivos: Button
     private lateinit var btnSalvar: Button
     private lateinit var btnCancelar: Button
 
@@ -50,12 +56,20 @@ class EditMemoryGameDialog : DialogFragment() {
 
         dialog.window?.setBackgroundDrawableResource(android.R.color.white)
 
+        //Inicializa o Auth do Firebase
+        FirebaseApp.initializeApp(requireContext())
+        auth = FirebaseAuth.getInstance()
+        storage = FirebaseStorage.getInstance()
+        firestore = FirebaseFirestore.getInstance()
+
         iniciarViews(view)
 
         // Agora nomeJogo JÁ está inicializado
         carregarDadosFirestore()
 
         btnCancelar.setOnClickListener { dismiss() }
+        btnEscolherArquivos.setOnClickListener { choiceFiles() }
+
 
         return dialog
     }
@@ -73,6 +87,7 @@ class EditMemoryGameDialog : DialogFragment() {
         spinnerTipo = view.findViewById(R.id.spinnerJogoMemoriaOpcoes)
         spinnerCategoria = view.findViewById(R.id.spinnerCategoriaOpcoes)
         layoutArquivos = view.findViewById(R.id.layoutArquivosSelecionados)
+        btnEscolherArquivos = view.findViewById(R.id.btnEscolherArquivos)
         btnSalvar = view.findViewById(R.id.btnSalvar)
         btnCancelar = view.findViewById(R.id.btnCancelar)
     }
@@ -99,7 +114,8 @@ class EditMemoryGameDialog : DialogFragment() {
                 val arquivos = arquivosFirestore.map { mapa ->
                     Imagem(
                         nome = mapa["es"] as? String ?: "",
-                        url = mapa["imagemURL"] as? String ?: ""
+                        url = mapa["imagemURL"] as? String ?: "",
+                        selecionado = true
                     )
                 }
 
@@ -107,6 +123,8 @@ class EditMemoryGameDialog : DialogFragment() {
 
                 preencherSpinnerTipo(tipo)
                 preencherSpinnerCategoria(categoria)
+
+                imagensSelecionadas = arquivos  // salva dentro da classe
 
                 mostrarArquivosSelecionados(arquivos)
 
@@ -186,5 +204,37 @@ class EditMemoryGameDialog : DialogFragment() {
     private fun extrairNomeDaUrl(url: String): String {
         val decoded = URLDecoder.decode(url, StandardCharsets.UTF_8.toString())
         return decoded.substringAfterLast("/").substringBefore("?")
+    }
+
+    private fun choiceFiles() {
+        val userId = auth.currentUser?.uid ?: return
+        val storageRef = storage.reference.child("arquivos/$userId/imagensPublicas")
+
+        storageRef.listAll()
+            .addOnSuccessListener { result ->
+
+                val listaImagens = mutableListOf<Imagem>()
+
+                result.items.forEach { item ->
+                    item.downloadUrl
+                        .addOnSuccessListener { url ->
+                            listaImagens.add(Imagem(item.name, url.toString()))
+
+                            if (listaImagens.size == result.items.size) {
+                                abrirDialog(listaImagens)
+                            }
+                        }
+                        .addOnFailureListener {
+                            Log.e("FIREBASE", "Erro ao carregar URL de ${item.name}", it)
+                        }
+                }
+            }
+    }
+
+    private fun abrirDialog(lista: List<Imagem>) {
+        val dialog = EscolherArquivosDialog(lista) { imagensSelecionadas ->
+            mostrarArquivosSelecionados(imagensSelecionadas)
+        }
+        dialog.show(parentFragmentManager, "EscolherArquivosDialog")
     }
 }

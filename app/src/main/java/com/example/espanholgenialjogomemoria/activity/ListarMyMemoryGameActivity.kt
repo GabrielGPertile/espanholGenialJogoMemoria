@@ -1,5 +1,6 @@
 package com.example.espanholgenialjogomemoria.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -50,7 +51,7 @@ class ListarMyMemoryGameActivity : BaseDrawerActivity()
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = ListarJogoMemoriaAdapter(
             listaJogoMemoria,
-            onJogar = { /*nome -> jogarJogoMemoria(nome)*/ },
+            onJogar = { nome -> jogarJogoMemoria(nome) },
             onEditar = { nome -> editarJogoMemoria(nome) },
             onExcluir = { nome -> excluirJogoMemoria(nome) }
         )
@@ -75,6 +76,13 @@ class ListarMyMemoryGameActivity : BaseDrawerActivity()
             .addOnFailureListener { e ->
                 e.printStackTrace()
             }
+    }
+
+    private fun jogarJogoMemoria(nome: String)
+    {
+        val intent = Intent(this, JogarJogoMemoria::class.java)
+        intent.putExtra("NOME_JOGO", nome)
+        startActivity(intent)
     }
 
     private fun editarJogoMemoria(nome: String)

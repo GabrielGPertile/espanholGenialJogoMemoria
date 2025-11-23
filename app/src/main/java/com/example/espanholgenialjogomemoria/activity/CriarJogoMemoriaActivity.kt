@@ -24,6 +24,7 @@ import com.example.espanholgenialjogomemoria.strategy.TipoJogoMemoria
 import com.example.espanholgenialjogomemoria.viewholder.CriarJogoMemoriaViewHolder
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 
@@ -32,7 +33,9 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
     private lateinit var auth: FirebaseAuth
     private lateinit var storage: FirebaseStorage
     private lateinit var firestore: FirebaseFirestore
+    private lateinit var database: FirebaseDatabase
     private lateinit var jogoMemoria: JogoMemoria
+    private var nomeUsuario: String? = null
     private lateinit var categoria: Categoria
     private lateinit var tipoJogoMemoria: TipoJogoMemoria
     private var selectTipoJogoMemoria: String? = null
@@ -54,6 +57,7 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
         auth = FirebaseAuth.getInstance()
         storage = FirebaseStorage.getInstance()
         firestore = FirebaseFirestore.getInstance()
+        database = FirebaseDatabase.getInstance()
 
         //obtem a lista de dados
         val categoriaList = categoria.addCategoria()
@@ -104,7 +108,9 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
 
 
         criarJogoMemoriaViewHolder.btnSalvar.setOnClickListener {
-           saveCreatedGame(selectTipoJogoMemoria, selectCategoria)
+            loadUserdata {
+                saveCreatedGame(selectTipoJogoMemoria, selectCategoria)
+            }
         }
 
         criarJogoMemoriaViewHolder.btnCanelar.setOnClickListener {
@@ -251,7 +257,7 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
                         tipoJogoMemoria = selectTipoJogoMemoria ?: "",
                         categoria = selectCategoria ?: "",
                         itens = itens,
-                        criadoPor = userId
+                        criadoPor = nomeUsuario ?: "Desconhecido"
                     )
                 )
                 .addOnSuccessListener {
@@ -292,7 +298,7 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
                         tipoJogoMemoria = selectTipoJogoMemoria ?: "",
                         categoria = selectCategoria ?: "",
                         itens = itens,
-                        criadoPor = userId
+                        criadoPor = nomeUsuario ?: "Desconhecido"
                     )
                 )
                 .addOnSuccessListener {
@@ -336,5 +342,21 @@ class CriarJogoMemoriaActivity: BaseDrawerActivity()
     private fun cancelCreateGame()
     {
         finish()
+    }
+
+    private fun loadUserdata(callback: (() -> Unit)? = null)
+    {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val userRef = database.getReference("users").child(userId)
+
+        userRef.get().addOnSuccessListener { snapshot ->
+            if (snapshot.exists()) {
+                nomeUsuario = snapshot.child("nomeCompleto").value as? String
+            }
+            callback?.invoke()
+        }.addOnFailureListener { e ->
+                Toast.makeText(this, "Erro ao carregar dados: ${e.message}", Toast.LENGTH_SHORT).show()
+                callback?.invoke()
+        }
     }
 }

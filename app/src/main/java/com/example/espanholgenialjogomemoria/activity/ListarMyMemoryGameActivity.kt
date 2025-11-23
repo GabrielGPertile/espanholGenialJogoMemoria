@@ -8,13 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.espanholgenialjogomemoria.R
 import com.example.espanholgenialjogomemoria.adapter.ListarJogoMemoriaAdapter
 import com.example.espanholgenialjogomemoria.dialog.EditMemoryGameDialog
-import com.example.espanholgenialjogomemoria.model.SanitizeNameStrategy
-import com.example.espanholgenialjogomemoria.strategy.SanitizeNameInterface
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 
 class ListarMyMemoryGameActivity : BaseDrawerActivity()
 {
@@ -24,8 +21,6 @@ class ListarMyMemoryGameActivity : BaseDrawerActivity()
     private lateinit var btnCasoDeUso: FloatingActionButton
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
-    private val sanitizer: SanitizeNameInterface = SanitizeNameStrategy()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

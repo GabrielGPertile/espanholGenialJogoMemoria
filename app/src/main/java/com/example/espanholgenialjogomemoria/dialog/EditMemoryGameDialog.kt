@@ -15,11 +15,16 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.example.espanholgenialjogomemoria.R
 import com.example.espanholgenialjogomemoria.model.Imagem
+import com.example.espanholgenialjogomemoria.model.ItemJogoMemoria
+import com.example.espanholgenialjogomemoria.model.JogoMemoria
+import com.example.espanholgenialjogomemoria.model.SanitizeNameStrategy
 import com.example.espanholgenialjogomemoria.strategy.Categoria
+import com.example.espanholgenialjogomemoria.strategy.SanitizeNameInterface
 import com.example.espanholgenialjogomemoria.strategy.TipoJogoMemoria
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
@@ -67,6 +72,14 @@ class EditMemoryGameDialog : DialogFragment() {
         // Agora nomeJogo JÁ está inicializado
         carregarDadosFirestore()
 
+        val nomeOriginalDoJogo = nomeJogo
+
+        btnSalvar.setOnClickListener {
+            val tipo = spinnerTipo.selectedItem.toString()
+            val categoria = spinnerCategoria.selectedItem.toString()
+            saveCreatedGame(tipo, categoria, nomeOriginalDoJogo)
+        }
+
         btnCancelar.setOnClickListener { dismiss() }
         btnEscolherArquivos.setOnClickListener { choiceFiles() }
 
@@ -112,8 +125,15 @@ class EditMemoryGameDialog : DialogFragment() {
                 val arquivosFirestore = doc.get("itens") as? List<Map<String, Any>> ?: emptyList()
 
                 val arquivos = arquivosFirestore.map { mapa ->
+
+                    val pt = mapa["pt"] as? String ?: ""
+                    val es = mapa["es"] as? String ?: ""
+
+                    // junta no formato que VOCÊ usa depois (pt_es)
+                    val nomeComposto = if (pt.isNotEmpty()) "${pt}_${es}" else es
+
                     Imagem(
-                        nome = mapa["es"] as? String ?: "",
+                        nome = nomeComposto,
                         url = mapa["imagemURL"] as? String ?: "",
                         selecionado = true
                     )
@@ -236,5 +256,105 @@ class EditMemoryGameDialog : DialogFragment() {
             mostrarArquivosSelecionados(imagensSelecionadas)
         }
         dialog.show(parentFragmentManager, "EscolherArquivosDialog")
+    }
+
+    private fun saveCreatedGame(tipoSelecionado: String, categoriaSelecionada: String,  jogoAntigo: String?)
+    {
+        if (etNome.text.isEmpty()) {
+            Toast.makeText(context, "O nome do jogo não pode estar vazio!", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        val nomeRaw = etNome.text.toString()
+        val quantidade = layoutArquivos.childCount
+
+        val sanitizer: SanitizeNameInterface = SanitizeNameStrategy()
+        val sanitizedName = try {
+            sanitizer.sanitizeFileName(nomeRaw)?.lowercase() ?: return
+        } catch (e: IllegalArgumentException) {
+            Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (tipoSelecionado == "Selecione um:") {
+            Toast.makeText(context, "Selecione uma tipo de jogo válido", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        if (categoriaSelecionada == "Selecione uma categoria") {
+            Toast.makeText(context, "Selecione uma categoria válida", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        if (quantidade < 5 || quantidade > 7) {
+            when {
+                quantidade < 5 -> Toast.makeText(context, "Selecione pelo menos 5 itens!", Toast.LENGTH_LONG).show()
+                quantidade > 7 -> Toast.makeText(context, "O máximo permitido é 7 itens!", Toast.LENGTH_LONG).show()
+            }
+            return
+        }
+
+        val itens = imagensSelecionadas.map { imagem ->
+            val nomeArquivo = extrairNomeDaUrl(imagem.url ?: "")
+            val nomeBase = nomeArquivo.substringBefore(".")
+            val partes = nomeBase.split("_")
+
+            val nomePT = partes.getOrNull(0)
+            val nomeES = partes.getOrNull(1)
+
+            if (tipoSelecionado == "Par_ES") {
+                ItemJogoMemoria(
+                    imagemURL = imagem.url ?: "",
+                    pt = null,
+                    es = nomeES
+                )
+            } else {
+                ItemJogoMemoria(
+                    imagemURL = imagem.url ?: "",
+                    pt = nomePT,
+                    es = nomeES
+                )
+            }
+        }
+
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val col = firestore.collection("users")
+            .document(userId)
+            .collection("jogoMemoria")
+
+        // -----------------------------------------------
+        // 🔥 SE ESTIVER EDITANDO → DELETAR JOGO ANTIGO
+        // -----------------------------------------------
+        if (jogoAntigo != null && jogoAntigo != sanitizedName) {
+            col.document(jogoAntigo).delete()
+                .addOnSuccessListener {
+                    Log.d("EDITAR", "Jogo antigo deletado: $jogoAntigo")
+                }
+                .addOnFailureListener {
+                    Log.e("EDITAR", "Erro ao deletar jogo antigo: ${it.message}")
+                }
+        }
+
+        // -----------------------------------------------
+        // 🔥 SALVAR JOGO (novo nome ou atualizado)
+        // -----------------------------------------------
+        col.document(sanitizedName)
+            .set(
+                JogoMemoria(
+                    nome = sanitizedName,
+                    tipoJogoMemoria = tipoSelecionado,
+                    categoria = categoriaSelecionada,
+                    itens = itens,
+                    criadoPor = userId
+                )
+            )
+            .addOnSuccessListener {
+                Toast.makeText(context, "Jogo salvo com sucesso!", Toast.LENGTH_LONG).show()
+
+                dismiss()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(context, "Erro ao salvar: ${e.message}", Toast.LENGTH_LONG).show()
+            }
     }
 }

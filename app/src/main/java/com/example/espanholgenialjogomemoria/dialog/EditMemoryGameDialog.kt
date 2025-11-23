@@ -3,16 +3,22 @@ package com.example.espanholgenialjogomemoria.dialog
 import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
+import com.bumptech.glide.Glide
 import com.example.espanholgenialjogomemoria.R
+import com.example.espanholgenialjogomemoria.model.Imagem
 import com.example.espanholgenialjogomemoria.strategy.Categoria
 import com.example.espanholgenialjogomemoria.strategy.TipoJogoMemoria
 import com.google.firebase.auth.FirebaseAuth
@@ -20,6 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class EditMemoryGameDialog : DialogFragment() {
 
+    private var imagensSelecionadas: List<Imagem> = emptyList()
     private lateinit var nomeJogo: String
     private lateinit var etNome: EditText
     private lateinit var spinnerTipo: Spinner
@@ -87,14 +94,24 @@ class EditMemoryGameDialog : DialogFragment() {
                 val nome = doc.getString("nome") ?: ""
                 val tipo = doc.getString("tipoJogoMemoria") ?: ""
                 val categoria = doc.getString("categoria") ?: ""
-                val arquivos = doc.get("arquivos") as? List<String> ?: emptyList()
+                val arquivosFirestore = doc.get("itens") as? List<Map<String, Any>> ?: emptyList()
+
+                val arquivos = arquivosFirestore.map { mapa ->
+                    Imagem(
+                        nome = mapa["es"] as? String ?: "",
+                        url = mapa["imagemURL"] as? String ?: ""
+                    )
+                }
 
                 etNome.setText(nome)
 
                 preencherSpinnerTipo(tipo)
                 preencherSpinnerCategoria(categoria)
 
-                //mostrarArquivosSelecionados(arquivos)
+                mostrarArquivosSelecionados(arquivos)
+
+                Log.d("DEBUG_FIRESTORE", arquivosFirestore.toString())
+
             }
     }
 
@@ -105,18 +122,6 @@ class EditMemoryGameDialog : DialogFragment() {
                 spinner.setSelection(i)
                 break
             }
-        }
-    }
-
-    private fun mostrarArquivosSelecionados(arquivos: List<String>) {
-        layoutArquivos.removeAllViews()
-
-        for (nomeArquivo in arquivos) {
-            val tv = TextView(requireContext())
-            tv.text = "• $nomeArquivo"
-            tv.textSize = 16f
-            tv.setPadding(8, 8, 8, 8)
-            layoutArquivos.addView(tv)
         }
     }
 
@@ -154,5 +159,32 @@ class EditMemoryGameDialog : DialogFragment() {
                 if (pos >= 0) spinnerCategoria.setSelection(pos)
             }
         }
+    }
+
+    private fun mostrarArquivosSelecionados(lista: List<Imagem>) {
+        layoutArquivos.removeAllViews()
+        val inflater = LayoutInflater.from(requireContext())
+
+        lista.forEach { arquivo ->
+            val item = inflater.inflate(R.layout.item_arquivo_selecionado, layoutArquivos, false)
+
+            val img = item.findViewById<ImageView>(R.id.imgPreview)
+            val tv = item.findViewById<TextView>(R.id.tvNomeFoto)
+
+            // 🔥 pega o nome real do arquivo a partir da URL
+            val nomeExtraido = extrairNomeDaUrl(arquivo.url.orEmpty())
+            tv.text = nomeExtraido
+
+            Glide.with(requireContext())
+                .load(arquivo.url)
+                .into(img)
+
+            layoutArquivos.addView(item)
+        }
+    }
+
+    private fun extrairNomeDaUrl(url: String): String {
+        val decoded = URLDecoder.decode(url, StandardCharsets.UTF_8.toString())
+        return decoded.substringAfterLast("/").substringBefore("?")
     }
 }

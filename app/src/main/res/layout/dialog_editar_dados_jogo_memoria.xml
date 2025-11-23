@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/tvComentario"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="#E0E0E0"
+            android:padding="10dp"
+            android:text="Criar jogo da memória!"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvNomeJogoMemoria"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="12dp"
+            android:padding="10dp"
+            android:text="Nome:"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvComentario" />
+
+        <EditText
+            android:id="@+id/etNomeJogoMemoria"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="nome do jogo"
+            android:inputType="text"
+            android:textSize="18sp"
+            android:maxLength="30"
+            app:layout_constraintBottom_toBottomOf="@id/tvNomeJogoMemoria"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tvNomeJogoMemoria"
+            app:layout_constraintTop_toTopOf="@id/tvNomeJogoMemoria" />
+
+        <TextView
+            android:id="@+id/tvTipoJogoMemoria"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="12dp"
+            android:padding="10dp"
+            android:text="Jogo da Memória Tipo:"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvNomeJogoMemoria" />
+
+        <Spinner
+            android:id="@+id/spinnerJogoMemoriaOpcoes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="@id/tvTipoJogoMemoria"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tvTipoJogoMemoria"
+            app:layout_constraintTop_toTopOf="@id/tvTipoJogoMemoria" />
+
+        <TextView
+            android:id="@+id/tvCategoria"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="12dp"
+            android:padding="10dp"
+            android:text="Categoria:"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTipoJogoMemoria" />
+
+        <Spinner
+            android:id="@+id/spinnerCategoriaOpcoes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="@id/tvCategoria"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tvCategoria"
+            app:layout_constraintTop_toTopOf="@id/tvCategoria" />
+
+        <TextView
+            android:id="@+id/tvEscolherArquivos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:padding="10dp"
+            android:text="Arquivos:"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvCategoria" />
+
+        <Button
+            android:id="@+id/btnEscolherArquivos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:text="Escolher Arquivos"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/tvEscolherArquivos"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tvEscolherArquivos"
+            app:layout_constraintTop_toTopOf="@id/tvEscolherArquivos" />
+
+        <LinearLayout
+            android:id="@+id/layoutArquivosSelecionados"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/btnEscolherArquivos" />
+
+        <Button
+            android:id="@+id/btnSalvar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Salvar"
+            app:layout_constraintTop_toBottomOf="@id/layoutArquivosSelecionados"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toStartOf="@id/btnCancelar"
+            android:layout_marginTop="24dp"/>
+
+        <Button
+            android:id="@+id/btnCancelar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Cancelar"
+            app:layout_constraintTop_toBottomOf="@id/layoutArquivosSelecionados"
+            app:layout_constraintStart_toEndOf="@id/btnSalvar"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="24dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

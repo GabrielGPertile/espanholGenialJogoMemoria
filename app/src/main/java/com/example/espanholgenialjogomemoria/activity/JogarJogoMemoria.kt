@@ -1,5 +1,148 @@
 package com.example.espanholgenialjogomemoria.activity
 
+import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
+import androidx.recyclerview.widget.GridLayoutManager
+import com.example.espanholgenialjogomemoria.R
+import com.example.espanholgenialjogomemoria.databinding.ActivityJogarJogoMemoriaBinding
+import com.example.espanholgenialjogomemoria.model.ItemJogoMemoria
+import com.example.seuprojeto.adapter.ParEnAdapter
+import com.example.seuprojeto.adapter.ParEnItem
+import com.example.seuprojeto.adapter.TriploAdapter
+import com.example.seuprojeto.adapter.TriploItem
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+
 class JogarJogoMemoria : BaseDrawerActivity()
 {
+    private lateinit var binding: ActivityJogarJogoMemoriaBinding
+    private lateinit var firestore: FirebaseFirestore
+    private lateinit var adapterTriplo: TriploAdapter
+    private lateinit var adapterParEn: ParEnAdapter
+    private lateinit var auth: FirebaseAuth
+
+    private var nomeJogo = ""
+    private var tipoJogo = "Par_ES"  // fallback padrão
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        binding = ActivityJogarJogoMemoriaBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // 🔹 Inicializa as views do Drawer e Toolbar
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
+        val drawerLayout = findViewById<androidx.drawerlayout.widget.DrawerLayout>(R.id.drawer_layout)
+        val navView = findViewById<com.google.android.material.navigation.NavigationView>(R.id.nav_view)
+
+        firestore = FirebaseFirestore.getInstance()
+        auth = FirebaseAuth.getInstance()
+
+        setupDrawer(
+            drawerLayout,
+            navView,
+            toolbar
+        )
+
+        loadProfilePhotoInDrawer()
+
+        nomeJogo = intent.getStringExtra("NOME_JOGO") ?: ""
+
+        if (nomeJogo.isEmpty()) {
+            Toast.makeText(this, "Erro: Nome do jogo não recebido!", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
+
+        binding.recyclerViewJogar.layoutManager = GridLayoutManager(this, 3)
+
+        carregarJogo()
+
+        Log.d("JogoMemoriaDebug", "Nome do jogo: $nomeJogo")
+        Log.d("fdsfhsd", "Tipo de Jogo: $tipoJogo")
+    }
+
+    private fun carregarJogo() {
+        val userId = auth.currentUser?.uid ?: return
+
+        val ref = firestore.collection("users")
+            .document(userId)
+            .collection("jogoMemoria")
+            .document(nomeJogo)
+
+        ref.get().addOnSuccessListener { doc ->
+
+            if (!doc.exists()) {
+                Toast.makeText(this, "Jogo não encontrado!", Toast.LENGTH_SHORT).show()
+                finish()
+                return@addOnSuccessListener
+            }
+
+            tipoJogo = doc.getString("tipoJogoMemoria") ?: "Par_ES"
+
+            // Pega a lista de itens diretamente do documento
+            val itensList = doc.get("itens") as? List<Map<String, Any>>
+            if (itensList.isNullOrEmpty()) {
+                Toast.makeText(this, "Jogo vazio! (nenhum item no documento)", Toast.LENGTH_SHORT).show()
+                return@addOnSuccessListener
+            }
+
+            // Mapeia para ItemJogoMemoria
+            val lista = itensList.mapNotNull { map ->
+                try {
+                    ItemJogoMemoria(
+                        imagemURL = map["imagemURL"] as? String ?: "",
+                        pt = map["pt"] as? String,
+                        es = map["es"] as? String
+                    )
+                } catch (e: Exception) {
+                    Log.w("JogoMemoriaDebug", "Erro ao mapear item: $map")
+                    null
+                }
+            }
+
+            if (lista.isEmpty()) {
+                Toast.makeText(this, "Jogo vazio! (nenhum item válido)", Toast.LENGTH_SHORT).show()
+                return@addOnSuccessListener
+            }
+
+            // Configura o adapter
+            when (tipoJogo) {
+                "Par_ES" -> {
+                    val listaParEs = lista.map { item ->
+                        ParEnItem(
+                            imagemUrl = item.imagemURL,
+                            texto = item.es ?: ""
+                        )
+                    }
+                    adapterParEn = ParEnAdapter(listaParEs) { clickedItem ->
+                        // clique
+                    }
+                    binding.recyclerViewJogar.adapter = adapterParEn
+                }
+
+                "Triplo" -> {
+                    val listaTriplo = lista.map { item ->
+                        Log.d("JogoMemoriaDebug", "Item TRIPLO - imagem: ${item.imagemURL}, PT: ${item.pt}, ES: ${item.es}")
+
+                        TriploItem(
+                            imagemUrl = item.imagemURL,
+                            textoPt = item.pt ?: "",
+                            textoEs = item.es ?: ""
+                        )
+                    }
+                    adapterTriplo = TriploAdapter(listaTriplo) { clickedItem ->
+                        // clique
+                    }
+                    binding.recyclerViewJogar.adapter = adapterTriplo
+
+                    Log.d("JogoMemoriaDebug", "Adapter TRIPLO setado com ${listaTriplo.size} itens")
+                }
+            }
+
+        }.addOnFailureListener {
+            Toast.makeText(this, "Erro ao acessar o jogo!", Toast.LENGTH_SHORT).show()
+        }
+    }
 }

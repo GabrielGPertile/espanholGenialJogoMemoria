@@ -38,6 +38,10 @@ class LoginActivity: AppCompatActivity()
         FirebaseApp.initializeApp(this)
         auth = FirebaseAuth.getInstance()
 
+        val perfs = getSharedPreferences("user_perfs", MODE_PRIVATE)
+        val savedEmail = perfs.getString("email", "")
+        loginActivityViewHolder.etLoginMail.setText(savedEmail)
+
         // Configuração dos Botões
         loginActivityViewHolder.btnLogar.setOnClickListener {
             showLoginScreen()
@@ -59,8 +63,7 @@ class LoginActivity: AppCompatActivity()
             val emailLogin = loginActivityViewHolder.etLoginMail.text.toString()
             val passwordLogin = loginActivityViewHolder.etLoginPassword.text.toString()
 
-            if(validateLoginInput(emailLogin, passwordLogin))
-            {
+            if (validateLoginInput(emailLogin, passwordLogin)) {
                 loginUser(emailLogin, passwordLogin)
             }
         }
@@ -388,6 +391,11 @@ class LoginActivity: AppCompatActivity()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
+
+                    // salvar o email do usuário
+                    val perfs = getSharedPreferences("user_perfs", MODE_PRIVATE)
+                    perfs.edit().putString("email", user?.email).apply()
+
                     Toast.makeText(
                         this,
                         "Login bem-sucedido! Bem-vindo, ${user?.email}",

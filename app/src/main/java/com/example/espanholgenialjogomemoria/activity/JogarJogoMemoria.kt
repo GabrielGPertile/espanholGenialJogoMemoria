@@ -1,6 +1,7 @@
 package com.example.espanholgenialjogomemoria.activity
 
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
@@ -115,7 +116,7 @@ class JogarJogoMemoria : BaseDrawerActivity()
             when (tipoJogo) {
                 "Par_ES" -> {
                     val listaCartas = mutableListOf<Carta>()
-                    lista.forEachIndexed  { index, item ->
+                    lista.forEachIndexed { index, item ->
                         // index é o ID único do item
                         listaCartas.add(Carta(index, TipoCarta.IMAGEM, "", item.imagemURL))
                         listaCartas.add(Carta(index, TipoCarta.TEXTO_ES, item.es ?: ""))
@@ -134,7 +135,8 @@ class JogarJogoMemoria : BaseDrawerActivity()
                                 adapterParEn.marcarParCorreto(pos1, pos2)
 
                                 if (adapterParEn.isJogoConcluido()) {
-                                    Toast.makeText(this, "Jogo concluído!", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(this, "Jogo concluído!", Toast.LENGTH_LONG)
+                                        .show()
                                     android.os.Handler().postDelayed({ finish() }, 2000)
                                 } else {
                                     Toast.makeText(this, "Par correto!", Toast.LENGTH_SHORT).show()
@@ -151,24 +153,46 @@ class JogarJogoMemoria : BaseDrawerActivity()
                 }
 
                 "Triplo" -> {
-                    val listaTriplo = lista.map { item ->
-                        Log.d("JogoMemoriaDebug", "Item TRIPLO - imagem: ${item.imagemURL}, PT: ${item.pt}, ES: ${item.es}")
+                    val listaCartas = mutableListOf<Carta>()
+                    lista.forEachIndexed { index, item ->
+                        // index é o ID único do item
+                        listaCartas.add(Carta(index, TipoCarta.IMAGEM, "", item.imagemURL))
+                        listaCartas.add(Carta(index, TipoCarta.TEXTO_ES, item.es ?: ""))
+                        listaCartas.add(Carta(index, TipoCarta.TEXTO_PT, item.pt ?: ""))
+                    }
 
-                        TriploItem(
-                            imagemUrl = item.imagemURL,
-                            textoPt = item.pt ?: "",
-                            textoEs = item.es ?: ""
-                        )
+                    listaCartas.shuffle()
+
+                    adapterTriplo = TriploAdapter(listaCartas) { carta, pos ->
+                        cartasSelecionadas.add(Pair(carta, pos))
+
+                        if (cartasSelecionadas.size == 3) {
+                            val (carta1, pos1) = cartasSelecionadas[0]
+                            val (carta2, pos2) = cartasSelecionadas[1]
+                            val (carta3, pos3) = cartasSelecionadas[2]
+
+                            if (carta1.id == carta2.id && carta1.id == carta3.id) {
+                                adapterTriplo.marcarTrioCorreto(pos1, pos2, pos3)
+
+                                if (adapterTriplo.isJogoConcluido()) {
+                                    Toast.makeText(this, "Jogo concluído!", Toast.LENGTH_LONG)
+                                        .show()
+                                    Handler().postDelayed({ finish() }, 2000)
+                                } else {
+                                    Toast.makeText(this, "Trio correto!", Toast.LENGTH_SHORT).show()
+                                }
+                            } else {
+                                adapterTriplo.virarCartasDeVolta(pos1, pos2, pos3)
+                                Toast.makeText(this, "Errado!", Toast.LENGTH_SHORT).show()
+                            }
+
+                            cartasSelecionadas.clear()
+                        }
                     }
-                    adapterTriplo = TriploAdapter(listaTriplo) { clickedItem ->
-                        // clique
-                    }
+
                     binding.recyclerViewJogar.adapter = adapterTriplo
-
-                    Log.d("JogoMemoriaDebug", "Adapter TRIPLO setado com ${listaTriplo.size} itens")
                 }
             }
-
         }.addOnFailureListener {
             Toast.makeText(this, "Erro ao acessar o jogo!", Toast.LENGTH_SHORT).show()
         }

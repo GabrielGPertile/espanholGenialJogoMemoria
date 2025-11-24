@@ -33,7 +33,7 @@ class ParEnAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ParEnViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_carta_verso_par_es, parent, false)
+            .inflate(R.layout.item_carta_verso, parent, false)
         return ParEnViewHolder(view)
     }
 

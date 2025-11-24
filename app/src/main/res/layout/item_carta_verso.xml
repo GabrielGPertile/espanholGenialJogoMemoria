@@ -1,0 +1,41 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="100dp"
+    android:layout_height="140dp"
+    android:layout_margin="8dp">
+
+    <!-- Verso da carta -->
+    <ImageView
+        android:id="@+id/imageViewVerso"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/carta_verso" />
+
+    <!-- Frente da carta -->
+    <LinearLayout
+        android:id="@+id/layoutFrente"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        android:background="@drawable/carta_verso">
+
+        <ImageView
+            android:id="@+id/imageViewFrente"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/textViewFrente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Texto"
+            android:textSize="14sp"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:paddingTop="4dp"/>
+    </LinearLayout>
+
+</FrameLayout>

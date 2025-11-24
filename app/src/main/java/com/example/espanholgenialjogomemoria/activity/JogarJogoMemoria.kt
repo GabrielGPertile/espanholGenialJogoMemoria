@@ -11,9 +11,7 @@ import com.example.espanholgenialjogomemoria.model.Carta
 import com.example.espanholgenialjogomemoria.model.ItemJogoMemoria
 import com.example.espanholgenialjogomemoria.model.TipoCarta
 import com.example.seuprojeto.adapter.ParEnAdapter
-import com.example.seuprojeto.adapter.ParEnItem
 import com.example.seuprojeto.adapter.TriploAdapter
-import com.example.seuprojeto.adapter.TriploItem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
